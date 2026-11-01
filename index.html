@@ -191,7 +191,7 @@ if(singular)return {nodes:roots.length,log:'Circuit is floating or has no DC pat
 let next=Array(roots.length).fill(0);for(let k=0;k<roots.length;k++)if(k!==gnd)next[k]=A[map(k)][N];sourceI=sources.map((q,k)=>A[n+k][N]);
 let err=Math.max(...next.map((x,i)=>Math.abs(x-V[i])));V=next.map((x,i)=>V[i]+0.65*(x-V[i]));if(err<1e-7){converged=true;break}
 }
-for(const c of caps)capState[c.c.id]=V[c.a]-V[c.b];
+for(const c of caps){let now=V[c.a]-V[c.b],previous=oldCap(c);branchCurrents.push({id:c.c.id,name:c.c.name,I:c.C/Math.max(dt,1e-5)*(now-previous)});capState[c.c.id]=now}
 for(const r of resistors)branchCurrents.push({id:r.c.id,name:r.c.name,I:(V[r.a]-V[r.b])/r.R});
 for(const d of diodes){let vd=V[d.a]-V[d.b],I=d.Is*(Math.exp(Math.max(-40,Math.min(40,vd/d.Vt)))-1);branchCurrents.push({id:d.c.id,name:d.c.name,I})}
 for(let k=0;k<sources.length;k++)branchCurrents.push({id:sources[k].c.id,name:sources[k].c.name,I:sourceI[k]||0});\nconst maxV=Math.max(...V)-Math.min(...V),maxI=Math.max(0,...branchCurrents.map(x=>Math.abs(x.I)));
