@@ -182,7 +182,7 @@ let A=Array.from({length:N},()=>Array(N+1).fill(0));
 const stampG=(a,b,g)=>{let i=map(a),j=map(b);if(i>=0)A[i][i]+=g;if(j>=0)A[j][j]+=g;if(i>=0&&j>=0){A[i][j]-=g;A[j][i]-=g}};
 const stampI=(a,b,I)=>{let i=map(a),j=map(b);if(i>=0)A[i][N]-=I;if(j>=0)A[j][N]+=I};
 for(const r of resistors)stampG(r.a,r.b,1/r.R);
-for(const c of caps){let g=c.C/Math.max(dt,1e-5),v0=oldCap(c);stampG(c.a,c.b,g);stampI(c.a,c.b,-g*v0)}
+for(const c of caps){let g=c.C/Math.max(dt,1e-5),v0=oldCap(c.c);stampG(c.a,c.b,g);stampI(c.a,c.b,-g*v0)}
 for(const d of diodes){let vd=V[d.a]-V[d.b],g=1e-12,ieq=0;if(vd>d.Vf){g=1/d.r;ieq=-d.Vf/d.r}else if(d.zener&&vd< -d.zener){g=1/d.r;ieq=d.zener/d.r}stampG(d.a,d.b,g);stampI(d.a,d.b,ieq)}
 sources.forEach((q,k)=>{let row=n+k,i=map(q.a),j=map(q.b);if(i>=0){A[i][row]+=1;A[row][i]+=1}if(j>=0){A[j][row]-=1;A[row][j]-=1}A[row][N]=-q.V});
 let singular=false;
@@ -191,7 +191,7 @@ if(singular)return {nodes:roots.length,log:'Circuit is floating or has no DC pat
 let next=Array(roots.length).fill(0);for(let k=0;k<roots.length;k++)if(k!==gnd)next[k]=A[map(k)][N];sourceI=sources.map((q,k)=>A[n+k][N]);
 let err=Math.max(...next.map((x,i)=>Math.abs(x-V[i])));V=next.map((x,i)=>V[i]+0.65*(x-V[i]));if(err<1e-7){converged=true;break}
 }
-for(const c of caps){let now=V[c.a]-V[c.b],previous=oldCap(c);branchCurrents.push({id:c.c.id,name:c.c.name,I:c.C/Math.max(dt,1e-5)*(now-previous)});capState[c.c.id]=now}
+for(const c of caps){let now=V[c.a]-V[c.b],previous=oldCap(c.c);branchCurrents.push({id:c.c.id,name:c.c.name,I:c.C/Math.max(dt,1e-5)*(now-previous)});capState[c.c.id]=now}
 for(const r of resistors)branchCurrents.push({id:r.c.id,name:r.c.name,I:(V[r.a]-V[r.b])/r.R});
 for(const d of diodes){let vd=V[d.a]-V[d.b],I=vd>d.Vf?(vd-d.Vf)/d.r:(d.zener&&vd< -d.zener?(vd+d.zener)/d.r:0);branchCurrents.push({id:d.c.id,name:d.c.name,I})}
 for(let k=0;k<sources.length;k++)branchCurrents.push({id:sources[k].c.id,name:sources[k].c.name,I:sourceI[k]||0});
