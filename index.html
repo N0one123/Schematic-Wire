@@ -158,7 +158,7 @@ groups.push(Array.from({length:16},(_,col)=>c.id+':'+(col*12+10)),Array.from({le
 for(const group of groups){let ids=group.filter(k=>nodeMap.has(k)).map(k=>nodeMap.get(k));for(let i=1;i<ids.length;i++)union(ids[0],ids[i])}
 }
 let roots=[...new Set(Array.from({length:nodeMap.size},(_,i)=>find(i)))],idx=new Map(roots.map((r,i)=>[r,i]));
-let groundNodes=[];for(const c of comps)if(c.type==='ground'){let k=c.id+':0';if(nodeMap.has(k))groundNodes.push(idx.get(find(nodeMap.get(k))))}
+let groundNodes=[];for(const c of comps)if(c.type==='ground'){let k=c.id+':0';if(nodeMap.has(k))groundNodes.push(nodeMap.get(k))}
 if(groundNodes.length>1)for(let i=1;i<groundNodes.length;i++)union(groundNodes[0],groundNodes[i]);
 roots=[...new Set(Array.from({length:nodeMap.size},(_,i)=>find(i)))];idx=new Map(roots.map((r,i)=>[r,i]));
 const gnd=groundNodes.length?idx.get(find(groundNodes[0])):0;
