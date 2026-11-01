@@ -168,7 +168,7 @@ for(const c of comps){
 const p=pinPositions(c);if(p.length<2)continue;let a=net({id:c.id,pin:0}),b=net({id:c.id,pin:1});if(a===null||b===null)continue;
 if(['resistor','pot','lamp','motor','speaker'].includes(c.type)){let R=parseValue(c.value);if(c.type==='motor'&&!/ohm|ω/i.test(c.value))R=20;if(c.type==='lamp'&&!/ohm|ω/i.test(c.value))R=100;if(Number.isFinite(R)&&R>0)resistors.push({a,b,R,c})}
 if(['battery','dc','ac'].includes(c.type)){let value=parseValue(c.value);if(Number.isFinite(value))sources.push({a,b,V:c.type==='ac'?value*Math.sin(2*Math.PI*50*simTime):value,c})}
-if(['diode','led','zener'].includes(c.type))diodes.push({a,b,c,Is:c.type==='led'?1e-18:1e-12,Vt:c.type==='led'?.055:.026});
+if(['diode','led','zener'].includes(c.type))diodes.push({a,b,c,Vf:c.type==='led'?1.9:.65,r:c.type==='led'?10:1,zener:c.type==='zener'?5.1:0});
 if(c.type==='capacitor'){let C=parseValue(c.value);if(Number.isFinite(C)&&C>0)caps.push({a,b,C,c})}
 if(['switch','push','toggle','slide','rocker'].includes(c.type)){let closed=/closed|on|1/i.test(c.value);resistors.push({a,b,R:closed?.02:1e12,c})}
 }
@@ -183,7 +183,7 @@ const stampG=(a,b,g)=>{let i=map(a),j=map(b);if(i>=0)A[i][i]+=g;if(j>=0)A[j][j]+
 const stampI=(a,b,I)=>{let i=map(a),j=map(b);if(i>=0)A[i][N]-=I;if(j>=0)A[j][N]+=I};
 for(const r of resistors)stampG(r.a,r.b,1/r.R);
 for(const c of caps){let g=c.C/Math.max(dt,1e-5),v0=oldCap(c);stampG(c.a,c.b,g);stampI(c.a,c.b,-g*v0)}
-for(const d of diodes){let vd=V[d.a]-V[d.b],ex=Math.exp(Math.max(-40,Math.min(40,vd/d.Vt))),cur=d.Is*(ex-1),g=d.Is*ex/d.Vt,ieq=cur-g*vd;stampG(d.a,d.b,g);stampI(d.a,d.b,ieq)}
+for(const d of diodes){let vd=V[d.a]-V[d.b],g=1e-12,ieq=0;if(vd>d.Vf){g=1/d.r;ieq=-d.Vf/d.r}else if(d.zener&&vd< -d.zener){g=1/d.r;ieq=d.zener/d.r}stampG(d.a,d.b,g);stampI(d.a,d.b,ieq)}
 sources.forEach((q,k)=>{let row=n+k,i=map(q.a),j=map(q.b);if(i>=0){A[i][row]+=1;A[row][i]+=1}if(j>=0){A[j][row]-=1;A[row][j]-=1}A[row][N]=-q.V});
 let singular=false;
 for(let i=0;i<N;i++){let p=i;for(let r=i+1;r<N;r++)if(Math.abs(A[r][i])>Math.abs(A[p][i]))p=r;if(Math.abs(A[p][i])<1e-14){singular=true;break}[A[i],A[p]]=[A[p],A[i]];let d=A[i][i];for(let j=i;j<=N;j++)A[i][j]/=d;for(let r=0;r<N;r++)if(r!==i){let f=A[r][i];if(Math.abs(f)>1e-20)for(let j=i;j<=N;j++)A[r][j]-=f*A[i][j]}}
@@ -193,7 +193,7 @@ let err=Math.max(...next.map((x,i)=>Math.abs(x-V[i])));V=next.map((x,i)=>V[i]+0.
 }
 for(const c of caps){let now=V[c.a]-V[c.b],previous=oldCap(c);branchCurrents.push({id:c.c.id,name:c.c.name,I:c.C/Math.max(dt,1e-5)*(now-previous)});capState[c.c.id]=now}
 for(const r of resistors)branchCurrents.push({id:r.c.id,name:r.c.name,I:(V[r.a]-V[r.b])/r.R});
-for(const d of diodes){let vd=V[d.a]-V[d.b],I=d.Is*(Math.exp(Math.max(-40,Math.min(40,vd/d.Vt)))-1);branchCurrents.push({id:d.c.id,name:d.c.name,I})}
+for(const d of diodes){let vd=V[d.a]-V[d.b],I=vd>d.Vf?(vd-d.Vf)/d.r:(d.zener&&vd< -d.zener?(vd+d.zener)/d.r:0);branchCurrents.push({id:d.c.id,name:d.c.name,I})}
 for(let k=0;k<sources.length;k++)branchCurrents.push({id:sources[k].c.id,name:sources[k].c.name,I:sourceI[k]||0});
 const maxV=Math.max(...V)-Math.min(...V),maxI=Math.max(0,...branchCurrents.map(x=>Math.abs(x.I)));
 let log=(converged?'Transient operating point converged.':'Operating point calculated.')+'\nTime: '+simTime.toFixed(2)+' s\n'+V.map((v,i)=>'Net '+(i+1)+': '+v.toFixed(4)+' V').join('\n')+'\n'+branchCurrents.map(x=>x.name+': '+(x.I*1000).toFixed(3)+' mA').join('\n');
