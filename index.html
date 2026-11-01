@@ -194,7 +194,8 @@ let err=Math.max(...next.map((x,i)=>Math.abs(x-V[i])));V=next.map((x,i)=>V[i]+0.
 for(const c of caps){let now=V[c.a]-V[c.b],previous=oldCap(c);branchCurrents.push({id:c.c.id,name:c.c.name,I:c.C/Math.max(dt,1e-5)*(now-previous)});capState[c.c.id]=now}
 for(const r of resistors)branchCurrents.push({id:r.c.id,name:r.c.name,I:(V[r.a]-V[r.b])/r.R});
 for(const d of diodes){let vd=V[d.a]-V[d.b],I=d.Is*(Math.exp(Math.max(-40,Math.min(40,vd/d.Vt)))-1);branchCurrents.push({id:d.c.id,name:d.c.name,I})}
-for(let k=0;k<sources.length;k++)branchCurrents.push({id:sources[k].c.id,name:sources[k].c.name,I:sourceI[k]||0});\nconst maxV=Math.max(...V)-Math.min(...V),maxI=Math.max(0,...branchCurrents.map(x=>Math.abs(x.I)));
+for(let k=0;k<sources.length;k++)branchCurrents.push({id:sources[k].c.id,name:sources[k].c.name,I:sourceI[k]||0});
+const maxV=Math.max(...V)-Math.min(...V),maxI=Math.max(0,...branchCurrents.map(x=>Math.abs(x.I)));
 let log=(converged?'Transient operating point converged.':'Operating point calculated.')+'\nTime: '+simTime.toFixed(2)+' s\n'+V.map((v,i)=>'Net '+(i+1)+': '+v.toFixed(4)+' V').join('\n')+'\n'+branchCurrents.map(x=>x.name+': '+(x.I*1000).toFixed(3)+' mA').join('\n');
 if(!groundNodes.length)log+='\nNote: no ground symbol; lowest-index net used as reference.';
 return {nodes:roots.length,voltage:maxV,current:maxI,log,voltages:V,currents:branchCurrents};
