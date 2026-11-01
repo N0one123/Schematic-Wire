@@ -21,7 +21,7 @@ Wires use orthogonal grid routing. The router treats component bodies and previo
 The Run button starts a time-stepped modified-nodal-analysis solver. Current electrical models are implemented for:
 - Resistors and potentiometers
 - DC voltage sources and a 50 Hz AC voltage source
-- Diodes and LEDs (nonlinear diode approximation)
+- Diodes, LEDs and zener diodes (piecewise-linear approximation)
 - Capacitors (backward-Euler transient model)
 - Open/closed switches, push buttons, toggle, slide and rocker switches
 - Simple resistive approximations for lamps, motors and speakers
