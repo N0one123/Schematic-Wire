@@ -69,7 +69,7 @@ const $=id=>document.getElementById(id);
 function el(tag,attrs={},parent){let n=document.createElementNS(NS,tag);for(let k in attrs)n.setAttribute(k,attrs[k]);if(parent)parent.appendChild(n);return n}
 function screenToWorld(e){let r=svg.getBoundingClientRect();return {x:(e.clientX-r.left-view.x)/view.s,y:(e.clientY-r.top-view.y)/view.s}}
 function applyView(){world.setAttribute('transform',`translate(${view.x} ${view.y}) scale(${view.s})`)}
-function pinPositions(c){let x=c.x,y=c.y;if(c.type==='breadboard'){let p=[];for(let col=0;col<16;col++){let px=x-34+col*(68/15);for(let row=0;row<5;row++)p.push([px,y-23+row*5]);for(let row=0;row<5;row++)p.push([px,y+3+row*5]);p.push([px,y-31],[px,y+31])}return p}const boardPins=['arduinoUno','arduinoNano','arduinoMega','esp8266','esp32','esp32s3','raspi','pico','picoW','stm32','teensy','microbit','feather'];const multiPins=['dht11','dht22','bme280','bmp280','ds18b20','mpu6050','adxl345','mpu9250','pir','hcsr04','vl53l0x','irObstacle','tcrt5000','bh1750','tsl2561','flame','tcs3200','mq2','mq135','soil','waterLevel','flow','max30102','mic','fingerprint','lcd16','lcd20','oled096','oled13','tft18','tft28','epaper','matrix','keypad','encoder','joystick','l298n','tb6612','drv8825','a4988','lm7805','lm7812','lm317','lm2596','xl6009','tp4056','bms','usbBoost'];if(boardPins.includes(c.type))return Array.from({length:12},(_,i)=>[i<6?x-43:x+43,y-25+(i%6)*10]);if(multiPins.includes(c.type))return [[x-43,y-15],[x-43,y+15],[x+43,y-15],[x+43,y+15]];switch(c.type){case'ground':return [[x,y-25]];case'npn':case'pnp':case'nmos':case'pmos':return [[x-32,y],[x+32,y-18],[x+32,y+18]];case'opamp':case'comparator':return [[x-35,y-18],[x-35,y+18],[x+35,y]];case'and':case'or':case'not':case'nand':case'xor':return [[x-35,y-12],[x-35,y+12],[x+35,y]];case'timer':return [[x-30,y-20],[x-30,y],[x-30,y+20],[x+30,y-20],[x+30,y],[x+30,y+20]];case'relay':return [[x-35,y-14],[x-35,y+14],[x+35,y-14],[x+35,y+14]];default:return [[x-32,y],[x+32,y]]}}
+function pinPositions(c){let x=c.x,y=c.y;if(c.type==='breadboard'){let p=[];for(let col=0;col<16;col++){let px=x-34+col*(68/15);for(let row=0;row<5;row++)p.push([px,y-23+row*5]);for(let row=0;row<5;row++)p.push([px,y+3+row*5]);p.push([px,y-31],[px,y+31])}return p}const boardPins=['arduinoUno','arduinoNano','arduinoMega','esp8266','esp32','esp32s3','raspi','pico','picoW','stm32','teensy','microbit','feather'];const multiPins=['dht11','dht22','bme280','bmp280','ds18b20','mpu6050','adxl345','mpu9250','pir','hcsr04','vl53l0x','irObstacle','tcrt5000','bh1750','tsl2561','flame','tcs3200','mq2','mq135','soil','waterLevel','flow','max30102','mic','fingerprint','lcd16','lcd20','oled096','oled13','tft18','tft28','epaper','matrix','keypad','encoder','joystick','l298n','tb6612','drv8825','a4988','lm7805','lm7812','lm317','lm2596','xl6009','tp4056','bms','usbBoost'];if(boardPins.includes(c.type))return Array.from({length:12},(_,i)=>[i<6?x-43:x+43,y-25+(i%6)*10]);if(multiPins.includes(c.type))return [[x-43,y-15],[x-43,y+15],[x+43,y-15],[x+43,y+15]];switch(c.type){case'ground':return [[x,y-25]];case'npn':case'pnp':case'nmos':case'pmos':return [[x-43,y],[x+43,y-18],[x+43,y+18]];case'opamp':case'comparator':return [[x-43,y-18],[x-43,y+18],[x+43,y]];case'and':case'or':case'not':case'nand':case'xor':return [[x-43,y-12],[x-43,y+12],[x+43,y]];case'timer':return [[x-43,y-20],[x-43,y],[x-43,y+20],[x+43,y-20],[x+43,y],[x+43,y+20]];case'relay':return [[x-43,y-14],[x-43,y+14],[x+43,y-14],[x+43,y+14]];default:return [[x-43,y],[x+43,y]]}}
 function symbol(c,g){let x=c.x,y=c.y,t=c.type;const line=(x1,y1,x2,y2)=>el('path',{d:`M ${x1} ${y1} L ${x2} ${y2}`,class:'symbol'},g);
 if(t==='breadboard'){el('rect',{x:x-39,y:y-31,width:78,height:62,rx:4,fill:'#e7e9e7',stroke:'#aeb8b6','stroke-width':1.2},g);el('rect',{x:x-37,y:y-29,width:74,height:58,rx:2,fill:'#f5f6f2',stroke:'#c7ceca'},g);line(x-36,y-1,x+36,y-1);line(x-36,y-27,x+36,y-27);line(x-36,y+27,x+36,y+27);el('text',{x:x-34,y:y-20,fill:'#d65b5b','font-size':4},g).textContent='+';el('text',{x:x-34,y:y+25,fill:'#4c83c7','font-size':4},g).textContent='−';for(let col=0;col<16;col++){let px=x-34+col*(68/15);for(let row=0;row<5;row++){el('circle',{cx:px,cy:y-23+row*5,r:1.25,fill:'#66716e'},g);el('circle',{cx:px,cy:y+3+row*5,r:1.25,fill:'#66716e'},g)}el('circle',{cx:px,cy:y-31,r:1.15,fill:'#d65b5b'},g);el('circle',{cx:px,cy:y+31,r:1.15,fill:'#4c83c7'},g)}}
 else if(t==='resistor'||t==='pot'){line(x-32,y,x-19,y);el('path',{d:`M ${x-19} ${y} l5 -9 10 18 10 -18 10 18 10 -18 5 9`,class:'symbol'},g);line(x+19,y,x+32,y);if(t==='pot')el('path',{d:`M ${x+2} ${y-25} l-8 12 12 0`,class:'symbol'},g)}
@@ -85,8 +85,47 @@ else if(t==='motor'||t==='lamp'||t==='speaker'||t==='voltmeter'||t==='ammeter'){
 else if(t==='and'||t==='or'||t==='not'||t==='nand'||t==='xor'){el('rect',{x:x-26,y:y-23,width:52,height:46,rx:5,class:'symbol'},g);el('text',{x,y:y+5,'text-anchor':'middle',fill:'#e0e8ef','font-size':13},g).textContent=({and:'&',or:'≥1',not:'¬',nand:'&',xor:'⊕'})[t]}
 else{el('rect',{x:x-26,y:y-20,width:52,height:40,rx:5,class:'symbol'},g);el('text',{x,y:y+5,'text-anchor':'middle',fill:'#e0e8ef','font-size':12},g).textContent=({timer:'555',relay:'K'})[t]||t.toUpperCase()}
 }
-function routeWire(w){const a=findPin(w.a),b=findPin(w.b);if(!a||!b)return '';const step=12,sx=Math.round(a.x/step),sy=Math.round(a.y/step),gx=Math.round(b.x/step),gy=Math.round(b.y/step),ignore=new Set([w.a.id,w.b.id]);const blocked=(x,y)=>comps.some(c=>!ignore.has(c.id)&&Math.abs(x*step-c.x)<52&&Math.abs(y*step-c.y)<44);const minX=Math.min(sx,gx,...comps.map(c=>Math.floor(c.x/step)))-12,maxX=Math.max(sx,gx,...comps.map(c=>Math.ceil(c.x/step)))+12,minY=Math.min(sy,gy,...comps.map(c=>Math.floor(c.y/step)))-12,maxY=Math.max(sy,gy,...comps.map(c=>Math.ceil(c.y/step)))+12,key=(x,y)=>x+','+y,open=[{x:sx,y:sy,g:0,f:Math.abs(gx-sx)+Math.abs(gy-sy)}],came=new Map(),cost=new Map([[key(sx,sy),0]]),dirs=[[1,0],[-1,0],[0,1],[0,-1]];let found=false,n=0;while(open.length&&n++<12000){open.sort((p,q)=>q.f-p.f);let c=open.pop(),ck=key(c.x,c.y);if(c.x===gx&&c.y===gy){found=true;break}for(let [dx,dy] of dirs){let x=c.x+dx,y=c.y+dy;if(x<minX||x>maxX||y<minY||y>maxY||(blocked(x,y)&&!(x===gx&&y===gy)))continue;let k=key(x,y),g=c.g+1;if(g<(cost.get(k)??Infinity)){cost.set(k,g);came.set(k,ck);open.push({x,y,g,f:g+Math.abs(gx-x)+Math.abs(gy-y)})}}}let pts=[[a.x,a.y],[sx*step,a.y],[sx*step,sy*step]];if(found){let rev=[],k=key(gx,gy);while(k!==key(sx,sy)){let [x,y]=k.split(',').map(Number);rev.push([x*step,y*step]);k=came.get(k);if(!k)break}pts.push(...rev.reverse())}else{let mx=(sx+gx)*step/2;pts.push([mx,sy*step],[mx,gy*step])}pts.push([gx*step,gy*step],[gx*step,b.y],[b.x,b.y]);let clean=[];for(let p of pts){if(clean.length>1){let u=clean[clean.length-2],v=clean[clean.length-1];if((v[0]-u[0])*(p[1]-v[1])===(v[1]-u[1])*(p[0]-v[0]))clean.pop()}clean.push(p)}return 'M'+clean.map(p=>p[0]+' '+p[1]).join(' L')}
-function render(){wireLayer.innerHTML='';itemLayer.innerHTML='';for(let w of wires){let d=routeWire(w);if(!d)continue;el('path',{d,class:'wire'+(sim?' live':'')},wireLayer);if(sim){el('path',{d,class:'wire-voltage'},wireLayer);let p=el('circle',{r:3.2,class:'wire-particle'},wireLayer);el('animateMotion',{dur:'1.7s',repeatCount:'indefinite',path:d,rotate:'auto'},p)}}for(let c of comps){let g=el('g',{class:'component'+(selected===c.id?' selected':'')+(sim?' sim-on':''),'data-id':c.id,'data-type':c.type},itemLayer);el('rect',{x:c.x-43,y:c.y-35,width:86,height:70,rx:8,class:'body'},g);symbol(c,g);el('text',{x:c.x,y:c.y+48,class:'label'},g).textContent=c.name;el('text',{x:c.x,y:c.y-42,class:'value'},g).textContent=c.value;el('circle',{cx:c.x+35,cy:c.y-27,r:3.5,class:'sim-indicator'},g);pinPositions(c).forEach((p,i)=>el('circle',{cx:p[0],cy:p[1],r:c.type==='breadboard'?2.5:4,class:c.type==='breadboard'?'breadboard-hole':'pin','data-pin':i,'data-id':c.id},g));g.addEventListener('pointerdown',componentDown)}updateStatus();updateInspector()}
+function routeWire(w,routed=[]){
+const a=findPin(w.a),b=findPin(w.b);if(!a||!b)return '';
+const step=8,sx=Math.round(a.x/step),sy=Math.round(a.y/step),gx=Math.round(b.x/step),gy=Math.round(b.y/step);
+const startComp=comps.find(c=>c.id===w.a.id),endComp=comps.find(c=>c.id===w.b.id);
+const near=(p,q,r)=>Math.hypot(p[0]-q[0],p[1]-q[1])<r;
+const segDist=(x,y,A,B)=>{let dx=B[0]-A[0],dy=B[1]-A[1],t=Math.max(0,Math.min(1,((x-A[0])*dx+(y-A[1])*dy)/(dx*dx+dy*dy||1)));return Math.hypot(x-(A[0]+t*dx),y-(A[1]+t*dy))};
+const blocked=(x,y)=>{
+const px=x*step,py=y*step;
+for(const c of comps){
+if(c.type==='breadboard'&&(c.id===w.a.id||c.id===w.b.id))continue;
+let inside=Math.abs(px-c.x)<49&&Math.abs(py-c.y)<41;
+if(!inside)continue;
+if(c.id===w.a.id&&near([px,py],[a.x,a.y],13))continue;
+if(c.id===w.b.id&&near([px,py],[b.x,b.y],13))continue;
+return true;
+}
+for(const path of routed){for(let i=1;i<path.length;i++){if(segDist(px,py,path[i-1],path[i])<7&&!near([px,py],[a.x,a.y],18)&&!near([px,py],[b.x,b.y],18))return true}}
+return false;
+};
+const margin=20,minX=Math.min(sx,gx,...comps.map(c=>Math.floor(c.x/step)))-margin,maxX=Math.max(sx,gx,...comps.map(c=>Math.ceil(c.x/step)))+margin,minY=Math.min(sy,gy,...comps.map(c=>Math.floor(c.y/step)))-margin,maxY=Math.max(sy,gy,...comps.map(c=>Math.ceil(c.y/step)))+margin;
+const key=(x,y)=>x+','+y,open=[{x:sx,y:sy,g:0,f:Math.abs(gx-sx)+Math.abs(gy-sy)}],came=new Map(),cost=new Map([[key(sx,sy),0]]),dirs=[[1,0],[-1,0],[0,1],[0,-1]];
+let found=false,n=0;
+while(open.length&&n++<30000){
+open.sort((p,q)=>q.f-p.f);let c=open.pop(),ck=key(c.x,c.y);
+if(c.x===gx&&c.y===gy){found=true;break}
+for(let [dx,dy] of dirs){let x=c.x+dx,y=c.y+dy;if(x<minX||x>maxX||y<minY||y>maxY||(blocked(x,y)&&!(x===gx&&y===gy)))continue;
+let k=key(x,y),g=c.g+1;if(g<(cost.get(k)??Infinity)){cost.set(k,g);came.set(k,ck);open.push({x,y,g,f:g+Math.abs(gx-x)+Math.abs(gy-y)})}}
+}
+let pts=[[a.x,a.y]];
+if(found){let rev=[],k=key(gx,gy);while(k!==key(sx,sy)){let v=k.split(',').map(Number);rev.push([v[0]*step,v[1]*step]);k=came.get(k);if(!k)break}pts.push(...rev.reverse())}
+else{
+// Deterministic fallback: try two clear orthogonal doglegs, never draw a diagonal through obstacles.
+let candidates=[[[a.x,a.y],[b.x,a.y],[b.x,b.y]],[[a.x,a.y],[a.x,b.y],[b.x,b.y]]];
+let valid=candidates.find(path=>{for(let j=1;j<path.length;j++){let A=path[j-1],B=path[j],len=Math.hypot(B[0]-A[0],B[1]-A[1]),steps=Math.ceil(len/step);for(let q=1;q<steps;q++){let x=A[0]+(B[0]-A[0])*q/steps,y=A[1]+(B[1]-A[1])*q/steps;if(blocked(Math.round(x/step),Math.round(y/step)))return false}}return true});
+if(valid)pts=valid;else pts.push([a.x+(b.x-a.x)/2,a.y],[a.x+(b.x-a.x)/2,b.y],[b.x,b.y]);
+}
+pts[0]=[a.x,a.y];pts[pts.length-1]=[b.x,b.y];
+let clean=[];for(let p of pts){if(clean.length>1){let u=clean[clean.length-2],v=clean[clean.length-1];if((v[0]-u[0])*(p[1]-v[1])===(v[1]-u[1])*(p[0]-v[0]))clean.pop()}clean.push(p)}
+w._routePoints=clean;return 'M'+clean.map(p=>p[0]+' '+p[1]).join(' L');
+}
+function render(){wireLayer.innerHTML='';itemLayer.innerHTML='';let routed=[];for(let w of wires){let d=routeWire(w,routed);if(w._routePoints)routed.push(w._routePoints);if(!d)continue;el('path',{d,class:'wire'+(sim?' live':'')},wireLayer);if(sim){el('path',{d,class:'wire-voltage'},wireLayer);let p=el('circle',{r:3.2,class:'wire-particle'},wireLayer);el('animateMotion',{dur:'1.7s',repeatCount:'indefinite',path:d,rotate:'auto'},p)}}for(let c of comps){let g=el('g',{class:'component'+(selected===c.id?' selected':'')+(sim?' sim-on':''),'data-id':c.id,'data-type':c.type},itemLayer);el('rect',{x:c.x-43,y:c.y-35,width:86,height:70,rx:8,class:'body'},g);symbol(c,g);el('text',{x:c.x,y:c.y+48,class:'label'},g).textContent=c.name;el('text',{x:c.x,y:c.y-42,class:'value'},g).textContent=c.value;el('circle',{cx:c.x+35,cy:c.y-27,r:3.5,class:'sim-indicator'},g);pinPositions(c).forEach((p,i)=>el('circle',{cx:p[0],cy:p[1],r:c.type==='breadboard'?2.5:4,class:c.type==='breadboard'?'breadboard-hole':'pin','data-pin':i,'data-id':c.id},g));g.addEventListener('pointerdown',componentDown)}updateStatus();updateInspector()}
 function findPin(ref){let c=comps.find(c=>c.id===ref.id);if(!c)return null;let p=pinPositions(c)[ref.pin];return p?{x:p[0],y:p[1]}:null}
 function updateStatus(){$('status').textContent=`${sim?'Simulation running':'Ready'} · ${comps.length} components · ${wires.length} wires`;$('count').textContent=comps.length}
 function updateInspector(){let c=comps.find(c=>c.id===selected),box=$('inspector');if(!c){box.innerHTML='<div class="empty">Select a component to inspect its properties.</div>';return}box.innerHTML='';let f=document.createElement('div');f.className='field';f.innerHTML='<label>Reference</label>';let name=document.createElement('input');name.value=c.name;name.onchange=()=>{c.name=name.value;render()};f.append(name);box.append(f);let v=document.createElement('div');v.className='field';v.innerHTML='<label>Value / model</label>';let val=document.createElement('input');val.value=c.value;val.onchange=()=>{c.value=val.value;render()};v.append(val);box.append(v);let p=document.createElement('div');p.className='field';p.innerHTML='<label>Position</label>';let pos=document.createElement('div');pos.className='muted';pos.textContent=`x: ${Math.round(c.x)} · y: ${Math.round(c.y)}`;p.append(pos);box.append(p)}
@@ -105,21 +144,61 @@ $('clearBtn').onclick=()=>{comps=[];wires=[];selected=null;sim=false;render();$(
 $('exampleBtn').onclick=()=>{comps=[];wires=[];let b={id:nextId++,type:'battery',name:'BAT1',value:'9 V',x:250,y:230},r={id:nextId++,type:'resistor',name:'R1',value:'1 kΩ',x:430,y:230},l={id:nextId++,type:'led',name:'D1',value:'Red',x:600,y:230},g={id:nextId++,type:'ground',name:'GND',value:'0 V',x:430,y:350};comps.push(b,r,l,g);wires.push({a:{id:b.id,pin:1},b:{id:r.id,pin:0}},{a:{id:r.id,pin:1},b:{id:l.id,pin:0}},{a:{id:l.id,pin:1},b:{id:g.id,pin:0}},{a:{id:g.id,pin:0},b:{id:b.id,pin:0}});selected=null;sim=false;render();$('log').textContent='Example loaded: 9 V source, series resistor and LED.';fitContent()};
 function fitContent(){if(!comps.length)return;let minX=Math.min(...comps.map(c=>c.x))-100,maxX=Math.max(...comps.map(c=>c.x))+100,minY=Math.min(...comps.map(c=>c.y))-100,maxY=Math.max(...comps.map(c=>c.y))+100,r=svg.getBoundingClientRect();view.s=Math.min(r.width/(maxX-minX),r.height/(maxY-minY),1.5);view.x=(r.width-(maxX-minX)*view.s)/2-minX*view.s;view.y=(r.height-(maxY-minY)*view.s)/2-minY*view.s;applyView()}
 function parseValue(v){let m=String(v).replace(/,/g,'').match(/[-+]?(?:\d*\.)?\d+(?:e[-+]?\d+)?/i);if(!m)return NaN;let n=Number(m[0]),s=String(v).toLowerCase();if(s.includes('meg'))n*=1e6;else if(/\bk|kohm|kω/.test(s))n*=1e3;else if(/\bm(?:ohm|ω)/.test(s))n*=1e6;else if(/\bu|µ/.test(s))n*=1e-6;else if(/\bn/.test(s))n*=1e-9;else if(/\bm/.test(s)&&!s.includes('mω'))n*=1e-3;return n}
-function solve(){// DC nodal analysis with ideal voltage sources (modified nodal analysis)
-let nodes=new Map(),edges=[],sources=[];function node(k){if(!nodes.has(k))nodes.set(k,nodes.size);return nodes.get(k)}
-for(let w of wires){let a=node(w.a.id+':'+w.a.pin),b=node(w.b.id+':'+w.b.pin);edges.push([a,b])}
-let parent=Array.from({length:nodes.size},(_,i)=>i),find=x=>parent[x]===x?x:(parent[x]=find(parent[x])),union=(a,b)=>parent[find(a)]=find(b);edges.forEach(e=>union(...e));for(let c of comps)if(c.type==='breadboard'){let groups=[];for(let col=0;col<16;col++){let base=col*12;groups.push(Array.from({length:5},(_,i)=>c.id+':'+(base+i)),Array.from({length:5},(_,i)=>c.id+':'+(base+5+i)))}groups.push(Array.from({length:16},(_,col)=>c.id+':'+(col*12+10)),Array.from({length:16},(_,col)=>c.id+':'+(col*12+11)));for(let group of groups){let present=group.filter(k=>nodes.has(k)).map(k=>nodes.get(k));for(let i=1;i<present.length;i++)union(present[0],present[i])}}
-let roots=[...new Set(parent.map((_,i)=>find(i)))],idx=new Map(roots.map((r,i)=>[r,i])),ground=new Set();
-for(let c of comps){if(c.type==='ground'){let p=pinPositions(c)[0];let key=c.id+':0';if(nodes.has(key))ground.add(idx.get(find(nodes.get(key))))}}
-if(!ground.size&&comps.some(c=>['battery','dc'].includes(c.type)))ground.add(0);
-let gnd=ground.values().next().value??0,netOf=ref=>nodes.has(ref.id+':'+ref.pin)?idx.get(find(nodes.get(ref.id+':'+ref.pin))):null;
-let resistors=[],vs=[];for(let c of comps){let p=pinPositions(c);if(p.length<2)continue;let a=netOf({id:c.id,pin:0}),b=netOf({id:c.id,pin:1});if(a===null||b===null)continue;if(['resistor','pot','lamp'].includes(c.type)){let R=parseValue(c.value);if(Number.isFinite(R)&&R>0)resistors.push({a,b,R,c})}if(['battery','dc'].includes(c.type)){let V=parseValue(c.value);if(Number.isFinite(V))vs.push({a,b,V,c})}}
-let active=roots.length-1,unknown=active+vs.length;if(!unknown){return {nodes:roots.length,voltage:0,current:0,log:'No connected circuit nets found. Connect component pins with wires.'}}
-let map=n=>n===gnd?-1:(n<gnd?n:n-1),A=Array.from({length:unknown},()=>Array(unknown+1).fill(0));for(let r of resistors){let g=1/r.R,i=map(r.a),j=map(r.b);if(i>=0)A[i][i]+=g;if(j>=0)A[j][j]+=g;if(i>=0&&j>=0){A[i][j]-=g;A[j][i]-=g}}
-vs.forEach((s,k)=>{let row=active+k,i=map(s.a),j=map(s.b);if(i>=0){A[i][row]+=1;A[row][i]+=1}if(j>=0){A[j][row]-=1;A[row][j]-=1}A[row][unknown]=s.V});
-for(let i=0;i<unknown;i++){let p=i;for(let r=i+1;r<unknown;r++)if(Math.abs(A[r][i])>Math.abs(A[p][i]))p=r;[A[i],A[p]]=[A[p],A[i]];let d=A[i][i];if(Math.abs(d)<1e-12)return {nodes:roots.length,log:'Circuit is floating or has conflicting ideal sources. Add a ground and check connections.'};for(let j=i;j<=unknown;j++)A[i][j]/=d;for(let r=0;r<unknown;r++)if(r!==i){let f=A[r][i];for(let j=i;j<=unknown;j++)A[r][j]-=f*A[i][j]}}
-let volt=Array(roots.length).fill(0);for(let n=0;n<roots.length;n++)if(n!==gnd)volt[n]=A[map(n)][unknown];let currents=resistors.map(r=>({name:r.c.name,I:(volt[r.a]-volt[r.b])/r.R}));return {nodes:roots.length,voltage:Math.max(...volt)-Math.min(...volt),current:Math.max(0,...currents.map(x=>Math.abs(x.I))),log:'DC operating point solved.\n'+volt.map((v,i)=>'Net '+(i+1)+': '+v.toFixed(4)+' V').join('\n')+'\n'+currents.map(x=>x.name+': '+(x.I*1000).toFixed(3)+' mA').join('\n')}
+let capState={},simTimer=null,simTime=0,lastResult=null;
+function solve(dt=0.05){
+const nodeMap=new Map(),wireEdges=[];
+const node=k=>{if(!nodeMap.has(k))nodeMap.set(k,nodeMap.size);return nodeMap.get(k)};
+for(const w of wires)wireEdges.push([node(w.a.id+':'+w.a.pin),node(w.b.id+':'+w.b.pin)]);
+let parent=Array.from({length:nodeMap.size},(_,i)=>i),find=x=>parent[x]===x?(x):(parent[x]=find(parent[x])),union=(a,b)=>{a=find(a);b=find(b);if(a!==b)parent[b]=a};
+wireEdges.forEach(e=>union(e[0],e[1]));
+// Breadboard strips: five holes per column on each side share a node; power rails run lengthwise.
+for(const c of comps)if(c.type==='breadboard'){
+let groups=[];for(let col=0;col<16;col++){let base=col*12;groups.push(Array.from({length:5},(_,i)=>c.id+':'+(base+i)),Array.from({length:5},(_,i)=>c.id+':'+(base+5+i)))}
+groups.push(Array.from({length:16},(_,col)=>c.id+':'+(col*12+10)),Array.from({length:16},(_,col)=>c.id+':'+(col*12+11)));
+for(const group of groups){let ids=group.filter(k=>nodeMap.has(k)).map(k=>nodeMap.get(k));for(let i=1;i<ids.length;i++)union(ids[0],ids[i])}
 }
-$('runBtn').onclick=()=>{sim=!sim;if(sim){let result=solve();$('nodes').textContent=result.nodes??0;$('voltage').textContent=result.voltage===undefined?'—':result.voltage.toFixed(3)+' V';$('current').textContent=result.current===undefined?'—':(result.current*1000).toFixed(3)+' mA';$('log').textContent=result.log}else{$('log').textContent='Simulation stopped.'} $('runBtn').textContent=sim?'■ Stop':'▶ Run';render()};
+let roots=[...new Set(Array.from({length:nodeMap.size},(_,i)=>find(i)))],idx=new Map(roots.map((r,i)=>[r,i]));
+let groundNodes=[];for(const c of comps)if(c.type==='ground'){let k=c.id+':0';if(nodeMap.has(k))groundNodes.push(idx.get(find(nodeMap.get(k))))}
+if(groundNodes.length>1)for(let i=1;i<groundNodes.length;i++)union(groundNodes[0],groundNodes[i]);
+roots=[...new Set(Array.from({length:nodeMap.size},(_,i)=>find(i)))];idx=new Map(roots.map((r,i)=>[r,i]));
+const gnd=groundNodes.length?idx.get(find(groundNodes[0])):0;
+const net=ref=>nodeMap.has(ref.id+':'+ref.pin)?idx.get(find(nodeMap.get(ref.id+':'+ref.pin))):null;
+const resistors=[],diodes=[],caps=[],sources=[];
+for(const c of comps){
+const p=pinPositions(c);if(p.length<2)continue;let a=net({id:c.id,pin:0}),b=net({id:c.id,pin:1});if(a===null||b===null)continue;
+if(['resistor','pot','lamp','motor','speaker'].includes(c.type)){let R=parseValue(c.value);if(c.type==='motor'&&!Number.isFinite(R))R=20;if(c.type==='lamp'&&!Number.isFinite(R))R=100;if(Number.isFinite(R)&&R>0)resistors.push({a,b,R,c})}
+if(['battery','dc','ac'].includes(c.type)){let V=parseValue(c.value);if(Number.isFinite(V))sources.push({a,b,V,c})}
+if(['diode','led','zener'].includes(c.type))diodes.push({a,b,c,Is:c.type==='led'?1e-18:1e-12,Vt:c.type==='led'?.055:.026});
+if(c.type==='capacitor'){let C=parseValue(c.value);if(Number.isFinite(C)&&C>0)caps.push({a,b,C,c})}
+if(['switch','push','toggle','slide','rocker'].includes(c.type)){let closed=/closed|on|1/i.test(c.value);resistors.push({a,b,R:closed?.02:1e12,c})}
+}
+if(!roots.length)return {nodes:0,voltage:0,current:0,log:'No connected circuit. Wire component pins together first.'};
+const n=roots.length-1,map=k=>k===gnd?-1:(k<gnd?k:k-1),vs=sources.length,N=n+vs;
+if(N===0)return {nodes:roots.length,voltage:0,current:0,log:'Connect a source and a load to simulate.'};
+let V=Array(roots.length).fill(0),branchCurrents=[],converged=false;
+const oldCap=(c)=>capState[c.id]??0;
+for(let iteration=0;iteration<24;iteration++){
+let A=Array.from({length:N},()=>Array(N+1).fill(0));
+const stampG=(a,b,g)=>{let i=map(a),j=map(b);if(i>=0)A[i][i]+=g;if(j>=0)A[j][j]+=g;if(i>=0&&j>=0){A[i][j]-=g;A[j][i]-=g}};
+const stampI=(a,b,I)=>{let i=map(a),j=map(b);if(i>=0)A[i][N]-=I;if(j>=0)A[j][N]+=I};
+for(const r of resistors)stampG(r.a,r.b,1/r.R);
+for(const c of caps){let g=c.C/Math.max(dt,1e-5),v0=oldCap(c);stampG(c.a,c.b,g);stampI(c.a,c.b,-g*v0)}
+for(const d of diodes){let vd=V[d.a]-V[d.b],ex=Math.exp(Math.max(-40,Math.min(40,vd/d.Vt))),cur=d.Is*(ex-1),g=d.Is*ex/d.Vt,ieq=cur-g*vd;stampG(d.a,d.b,g);stampI(d.a,d.b,ieq)}
+sources.forEach((q,k)=>{let row=n+k,i=map(q.a),j=map(q.b);if(i>=0){A[i][row]+=1;A[row][i]+=1}if(j>=0){A[j][row]-=1;A[row][j]-=1}A[row][N]=q.V});
+let singular=false;
+for(let i=0;i<N;i++){let p=i;for(let r=i+1;r<N;r++)if(Math.abs(A[r][i])>Math.abs(A[p][i]))p=r;if(Math.abs(A[p][i])<1e-14){singular=true;break}[A[i],A[p]]=[A[p],A[i]];let d=A[i][i];for(let j=i;j<=N;j++)A[i][j]/=d;for(let r=0;r<N;r++)if(r!==i){let f=A[r][i];if(Math.abs(f)>1e-20)for(let j=i;j<=N;j++)A[r][j]-=f*A[i][j]}}
+if(singular)return {nodes:roots.length,log:'Circuit is floating or has no DC path. Check ground, source polarity and connections.'};
+let next=Array(roots.length).fill(0);for(let k=0;k<roots.length;k++)if(k!==gnd)next[k]=A[map(k)][N];
+let err=Math.max(...next.map((x,i)=>Math.abs(x-V[i])));V=next;if(err<1e-7){converged=true;break}
+}
+for(const c of caps)capState[c.c.id]=V[c.a]-V[c.b];
+for(const r of resistors)branchCurrents.push({name:r.c.name,I:(V[r.a]-V[r.b])/r.R});
+for(const d of diodes){let vd=V[d.a]-V[d.b],I=d.Is*(Math.exp(Math.max(-40,Math.min(40,vd/d.Vt)))-1);branchCurrents.push({name:d.c.name,I})}
+const maxV=Math.max(...V)-Math.min(...V),maxI=Math.max(0,...branchCurrents.map(x=>Math.abs(x.I)));
+let log=(converged?'Transient operating point converged.':'Operating point calculated.')+'\nTime: '+simTime.toFixed(2)+' s\n'+V.map((v,i)=>'Net '+(i+1)+': '+v.toFixed(4)+' V').join('\n')+'\n'+branchCurrents.map(x=>x.name+': '+(x.I*1000).toFixed(3)+' mA').join('\n');
+if(!groundNodes.length)log+='\nNote: no ground symbol; lowest-index net used as reference.';
+return {nodes:roots.length,voltage:maxV,current:maxI,log,voltages:V,currents:branchCurrents};
+}
+$('runBtn').onclick=()=>{sim=!sim;if(sim){simTime=0;capState={};lastResult=solve(0.05);simTimer=setInterval(()=>{simTime+=0.05;lastResult=solve(0.05);$('nodes').textContent=lastResult.nodes??0;$('voltage').textContent=lastResult.voltage===undefined?'—':lastResult.voltage.toFixed(3)+' V';$('current').textContent=lastResult.current===undefined?'—':(lastResult.current*1000).toFixed(3)+' mA';$('log').textContent=lastResult.log},50);$('nodes').textContent=lastResult.nodes??0;$('voltage').textContent=lastResult.voltage===undefined?'—':lastResult.voltage.toFixed(3)+' V';$('current').textContent=lastResult.current===undefined?'—':(lastResult.current*1000).toFixed(3)+' mA';$('log').textContent=lastResult.log}else{clearInterval(simTimer);simTimer=null;$('log').textContent='Simulation stopped.'} $('runBtn').textContent=sim?'■ Stop':'▶ Run';render()};
 render();
 </script></body></html>
