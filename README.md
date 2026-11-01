@@ -1,3 +1,5 @@
+# THIS IS AN AI VIBE PROJECT!!!
+
 # Schematic Wire
 
 A browser-based schematic editor and early circuit simulator.
